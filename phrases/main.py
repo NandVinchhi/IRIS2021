@@ -74,13 +74,7 @@ def get_pose(k):
 
 def parsed(s):
     final = []
-    d = {
-        "HELLO": ["hello1", "hello2"],
-        "THANK YOU": ["thankyou1", "thankyou2"],
-        "PLEASE": ["please"],
-        "HOW ARE YOU": ["howareyou"],
-        "I LOVE YOU": ["iloveyou"]
-    }
+    
     for i in range(0, len(s)):
         for j in d:
             try:
@@ -191,42 +185,11 @@ while True:
     if frame_counter % 5 == 0:
         final_pose = get_pose(angles_data)
 
-        final_sign = "none"
-        if final_pose == "pose1":
-            final_sign = "hello1"
-        elif final_pose == "pose2":
-            predict_data = [0] * (80 - len(hands_data)) + hands_data
+        
+        score1 = np.mean(np.absolute(np.subtract(predict_data, list(map(float, pose2_csv[1][0:80])))))
+        score2 = np.mean(np.absolute(np.subtract(predict_data, list(map(float, pose2_csv[2][0:80])))))
 
-            score1 = np.mean(np.absolute(np.subtract(predict_data, list(map(float, pose2_csv[1][0:80])))))
-            score2 = np.mean(np.absolute(np.subtract(predict_data, list(map(float, pose2_csv[2][0:80])))))
-
-            final_sign = "hello2"
-            
-        elif final_pose == "pose3":
-            predict_data = [0] * (80 - len(hands_data)) + hands_data
-
-            score1 = np.mean(np.absolute(np.subtract(predict_data, list(map(float, pose3_csv[1][0:80])))))
-            score2 = np.mean(np.absolute(np.subtract(predict_data, list(map(float, pose3_csv[2][0:80])))))
-
-            if score1 < score2:
-                final_sign = "name"
-            else:
-                final_sign = "howareyou"
-                
-        elif final_pose == "pose4":
-            final_sign = "thankyou1"
-        elif final_pose == "pose5":
-            final_sign = "thankyou2"
-            
         if final_sign != "none":
-            if final_sign != last_sign:
-
-                if final_sign == "thankyou2":
-                    threading.Thread(target=playsound, args=('thankyou.mp3',), daemon=True).start()
-                elif final_sign == "howareyou":
-                    threading.Thread(target=playsound, args=('howareyou.mp3',), daemon=True).start()
-                elif final_sign == "hello2":
-                    threading.Thread(target=playsound, args=('hello.mp3',), daemon=True).start()
                 sentence.append(final_sign)
                 final_parsed_sentence = parsed(sentence)
 
